@@ -1,0 +1,62 @@
+name: Release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to validate and pack
+        required: true
+        type: choice
+        options:
+          - signal
+          - effect
+          - collections
+          - cssom
+          - dom
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Use the pinned npm CLI
+        run: npm install --global npm@12.0.2
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Validate workspace
+        run: npm run build && npm run check && npm run lint && npm run format:check && npm test && npm run test:polyfill && npm run package:check
+      - name: Pack candidate
+        id: candidate
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          mkdir -p release
+          tarball="$(npm pack --workspace "@signal-tools/$PACKAGE" --pack-destination release | tail -n 1)"
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+      - name: Test Signal candidate in a clean consumer
+        if: inputs.package == 'signal'
+        env:
+          TARBALL: ${{ steps.candidate.outputs.tarball }}
+        run: node scripts/test-signal-package.mjs "release/$TARBALL"
+      - name: Write candidate manifest and checksum
+        env:
+          PACKAGE: ${{ inputs.package }}
+          TARBALL: ${{ steps.candidate.outputs.tarball }}
+        run: node scripts/write-candidate-manifest.mjs "release/$TARBALL" "$PACKAGE"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: npm-release-candidate-${{ inputs.package }}
+          path: release/
+          if-no-files-found: error
+          retention-days: 14

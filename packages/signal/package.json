@@ -1,0 +1,57 @@
+{
+	"name": "@signal-tools/signal",
+	"version": "0.1.0",
+	"description": "A small, performance-optimized, spec-compliant TC39 Signals implementation",
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/signal#readme",
+	"license": "MIT-0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/signal.d.ts",
+			"default": "./dist/signal.min.js"
+		}
+	},
+	"main": "./dist/signal.min.js",
+	"types": "./dist/signal.d.ts",
+	"files": [
+		"dist/signal.d.ts",
+		"dist/signal.d.ts.map",
+		"dist/signal.min.js",
+		"dist/signal.min.js.map"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/signal"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"sideEffects": false,
+	"keywords": [
+		"computed",
+		"dependency",
+		"effect",
+		"fine-grained",
+		"memoization",
+		"polyfill",
+		"ponyfill",
+		"proposal",
+		"reactive",
+		"reactivity",
+		"scheduling",
+		"signal",
+		"state",
+		"tc39",
+		"watcher"
+	],
+	"scripts": {
+		"build": "tsc",
+		"postbuild": "node scripts/minify.js",
+		"prepack": "npm run build"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	}
+}

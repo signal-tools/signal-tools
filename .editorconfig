@@ -1,0 +1,35 @@
+root = true
+
+# =============================================================================
+# DEFAULTS
+# =============================================================================
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = tab
+insert_final_newline = true
+tab_width = 4
+trim_trailing_whitespace = true
+
+# =============================================================================
+# DOCUMENTATION
+# =============================================================================
+
+[*.md]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = false
+
+[*.patch]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+[*.{yaml,yml}]
+indent_size = 2
+indent_style = space

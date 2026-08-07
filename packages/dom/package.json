@@ -1,0 +1,52 @@
+{
+	"name": "@signal-tools/dom",
+	"version": "0.1.0",
+	"description": "Functional DOM, SVG, and MathML templating with TC39 Signals",
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/dom#readme",
+	"license": "MIT-0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/dom"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"sideEffects": false,
+	"keywords": [
+		"dom",
+		"functional",
+		"signals",
+		"svg",
+		"templating"
+	],
+	"scripts": {
+		"build": "node --eval \"import('node:fs').then(({ rmSync }) => rmSync('dist', { force: true, recursive: true }))\" && tsc -p tsconfig.build.json",
+		"check": "tsc --noEmit -p tsconfig.json",
+		"lint": "publint && attw --pack . --profile esm-only",
+		"prepack": "npm run build"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	},
+	"dependencies": {
+		"@michijs/htmltype": "0.4.12",
+		"@signal-tools/effect": "0.1.0"
+	},
+	"peerDependencies": {
+		"@signal-tools/signal": "^0.1"
+	}
+}

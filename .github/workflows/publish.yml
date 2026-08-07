@@ -1,0 +1,101 @@
+name: Publish npm release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package in the candidate artifact
+        required: true
+        type: choice
+        options:
+          - signal
+          - effect
+          - collections
+          - cssom
+          - dom
+      candidate_run_id:
+        description: Successful release-candidate workflow run ID
+        required: true
+        type: string
+      version:
+        description: Exact candidate version
+        required: true
+        type: string
+      confirmation:
+        description: Type "publish <package>@<version>" to authorize publication
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: npm
+    steps:
+      - id: candidate
+        name: Verify completed candidate run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.candidate_run_id }}
+        run: |
+          conclusion="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .conclusion)"
+          event="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .event)"
+          name="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .name)"
+          path="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .path)"
+          repository="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .head_repository.full_name)"
+          head_sha="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .head_sha)"
+          if [[ "$conclusion" != "success" || "$event" != "workflow_dispatch" || "$name" != "Release candidate" || "$path" != ".github/workflows/release-candidate.yml" || "$repository" != "$GITHUB_REPOSITORY" ]]; then
+            echo "Run $RUN_ID is not a successful release candidate" >&2
+            exit 1
+          fi
+          echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
+      - name: Verify explicit publication confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$CONFIRMATION" != "publish $PACKAGE@$VERSION" ]]; then
+            echo "Confirmation must exactly match: publish $PACKAGE@$VERSION" >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.candidate.outputs.head_sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+      - name: Use the pinned npm CLI
+        run: npm install --global npm@12.0.2
+      - uses: actions/download-artifact@v8
+        with:
+          name: npm-release-candidate-${{ inputs.package }}
+          path: release
+          run-id: ${{ inputs.candidate_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify candidate checksum, SHA, and metadata
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.head_sha }}
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+        run: node scripts/verify-candidate.mjs release "$PACKAGE" "$VERSION"
+      - name: Verify internal dependencies are published
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: node scripts/verify-published-dependencies.mjs "$PACKAGE"
+      - name: Publish verified candidate
+        env:
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+        run: npm publish "release/signal-tools-$PACKAGE-$VERSION.tgz" --access public --provenance

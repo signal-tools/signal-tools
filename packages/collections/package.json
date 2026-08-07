@@ -1,0 +1,50 @@
+{
+	"name": "@signal-tools/collections",
+	"version": "0.1.0",
+	"description": "Signal-aware native Array, Map, Set, and Object collections",
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/collections#readme",
+	"license": "MIT-0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/collections"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"sideEffects": false,
+	"keywords": [
+		"array",
+		"collection",
+		"map",
+		"object",
+		"reactive",
+		"reactivity",
+		"set",
+		"signal",
+		"tc39"
+	],
+	"scripts": {
+		"build": "node --eval \"import('node:fs').then(({ rmSync }) => rmSync('dist', { force: true, recursive: true }))\" && tsc",
+		"prepack": "npm run build"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	},
+	"peerDependencies": {
+		"@signal-tools/signal": "^0.1"
+	}
+}

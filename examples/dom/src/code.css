@@ -1,0 +1,52 @@
+pre {
+	/* Layout */
+	margin-block: 1rem;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+	padding: 0.5rem 0.75rem;
+
+	/* Text */
+	font: 700 100% / 1.75 ui-monospace;
+
+	/* Appearance */
+	box-shadow: var(--color-gray-200) 0 0 0 1px inset;
+
+	& > code {
+		display: block;
+
+		&::highlight(tag) {
+			/* Appearance */
+			color: var(--color-green);
+		}
+
+		&::highlight(keyword) {
+			color: #569cd6;
+		}
+
+		&::highlight(attr-name) {
+			/* Appearance */
+			color: var(--color-violet);
+		}
+
+		&::highlight(attr-value) {
+			color: var(--color-navy);
+		}
+
+		&::highlight(string) {
+			color: #ce9178;
+		}
+
+		&::highlight(punctuation) {
+			color: var(--color-gray-500);
+		}
+
+		&::highlight(comment) {
+			color: var(--color-gray-500);
+		}
+
+		&::highlight(function) {
+			color: var(--color-purple);
+		}
+	}
+}

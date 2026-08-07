@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Fundomental</title>
+		<meta charset="utf-8" />
+		<meta name="robots" content="noindex" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="og:title" content="Fundomental" />
+		<meta name="description" content="A library for creating DOM elements with a functional syntax." />
+		<meta property="og:type" content="website" />
+		<link rel="shortcut icon" href="./favicon.ico" />
+		<link rel="stylesheet" href="./index.css" />
+		<script type="module" src="./syntax-highlighting.js"></script>
+	</head>
+
+	<body>
+		<header>
+			<h1>Fundomental</h1>
+		</header>
+
+		<main>
+			<p>
+				<strong>Signal DOM</strong> is a small templating library for creating real DOM nodes using a plain
+				functional syntax.
+			</p>
+
+			<ul>
+				<li>There are no runtime dependencies.</li>
+				<li>There are no virtual DOMs.</li>
+				<li>There are no compilation steps.</li>
+			</ul>
+
+			<p>At its core is a simple primitive:</p>
+
+			<pre><code data-lang="typescript">import { attrs, svg } from "@signal-tools/dom";
+
+// () =&gt; &lt;svg viewBox="0 0 16 16"&gt;&lt;circle cx="8" cy="8" r="6" /&gt;&lt;/svg&gt;
+const $svg = svg("svg", attrs({ viewBox: "0 0 16 16" }), svg("circle", attrs({ cx: 8, cy: 8, r: 6 })))</code></pre>
+
+			<ul>
+				<li>HTML can be made with <code>html()</code>.</li>
+				<li>MathML can be made with <code>mathml()</code>.</li>
+				<li>SVG can be made with <code>svg()</code>.</li>
+				<li>Text can be made with <code>text()</code>.</li>
+				<li>Shadow roots can be attached with <code>shadowRoot()</code>.</li>
+				<li>Element internals can be configured with <code>elementInternals()</code>.</li>
+				<li>Constructed stylesheets can be created with <code>css</code> and adopted with <code>adoptedCSS()</code>.</li>
+			</ul>
+
+			<p>Calling the returned function mounts live DOM directly:</p>
+
+			<pre><code data-lang="typescript">$svg(document.body)</code></pre>
+
+			<h2>Enter Signals</h2>
+
+			<p>
+				Signal DOM uses <code>@signal-tools/signal</code> directly:
+			</p>
+
+			<pre><code data-lang="typescript">import { Signal } from "@signal-tools/signal";
+import { attrs, svg } from "@signal-tools/dom";</code></pre>
+
+			<p>
+				Static values work normally, while <code>Signal.State</code> and <code>Signal.Computed</code> values
+				update their bindings automatically.
+			</p>
+
+			<p>
+				Removing DOM nodes does not currently dispose their reactive bindings automatically.
+			</p>
+
+			<p>Attributes, properties, and nested fragments all react to signals.</p>
+			<p>If an attribute is a signal, the DOM updates automatically when it changes:</p>
+
+			<pre><code data-lang="typescript">const viewBox = new Signal.State("0 0 16 16");
+
+const $svg = svg("svg", attrs({ viewBox }), svg("circle", attrs({ cx: 8, cy: 8, r: 6 })))
+
+// ... later that day ...
+
+viewBox.set("0 0 8 8")</code></pre>
+
+			<p>
+				A <code>group()</code> primitive conditionally presents a persistent group of nodes and handles nested
+				DOM updates cleanly.
+			</p>
+
+			<pre><code data-lang="typescript">const showCheck = new Signal.State(true);
+
+svg("svg",
+	attrs({ viewBox: "0 0 16 16", }),
+	// always show this circle
+	svg("circle", attrs({ cx: 8, cy: 8, r: 6 })),
+
+	// only show these circles when showCheck is true
+	group(showCheck,
+		svg("circle", attrs({ cx: 8, cy: 8, r: 4, fill: "blue" })),
+		svg("circle", attrs({ cx: 8, cy: 8, r: 2, fill: "lightblue" })),
+	),
+
+	// always show this circle
+	svg("circle", attrs({ cx: 8, cy: 8, r: 1 }))
+	)</code></pre>
+
+			<h2>Shadow DOM, styles, and internals</h2>
+
+			<p>
+				<code>css</code> creates a <code>CSSStyleSheet</code>; signal interpolations update that same sheet.
+				<code>adoptedCSS()</code> adopts the sheet into a document or shadow root, and <code>shadowRoot()</code> attaches a
+				shadow root and applies templates to it.
+			</p>
+
+			<pre><code data-lang="typescript">const display = new Signal.State("block");
+
+const $card = html("article",
+	shadowRoot({ mode: "open" },
+		adoptedCSS(css`:host { display: ${display} }`),
+		html("slot"),
+	),
+)</code></pre>
+
+			<p>
+				Stylesheets remain plain platform objects. <code>dispose(root)</code> stops reactive sheets adopted with
+				<code>adoptedCSS()</code>; call <code>dispose(sheet)</code> when a reactive sheet is used independently.
+			</p>
+
+			<p>
+				<code>elementInternals()</code> calls <code>attachInternals()</code> once and assigns writable
+				<code>ElementInternals</code> properties. Its values may also be signals.
+			</p>
+
+			<pre><code data-lang="typescript">customElements.define("x-control", class extends HTMLElement {});
+
+const role = new Signal.State&lt;string | null&gt;("button");
+const control = elementInternals({ role })(document.createElement("x-control"));</code></pre>
+
+			<p>
+				As with the underlying DOM APIs, a shadow root or element internals can only be attached to a valid host
+				and cannot be attached twice.
+			</p>
+
+			<p>
+				The browser suite covers current Playwright releases of Chromium, Firefox, and WebKit. APIs such as
+				<code>attachInternals()</code> and constructed stylesheets still require support from the browser where
+				their corresponding helpers are used.
+			</p>
+
+			<h2>Fully Typed</h2>
+
+			<p>
+				<strong>Signal DOM</strong> is fully typed for HTML, SVG, and MathML elements, attributes, and
+				properties.
+			</p>
+
+			<ul>
+				<li>
+					Typed HTML (<code>DOM.HTML</code>)
+					<ul>
+						<li>
+							HTML elements can be typed from <code>DOM.HTML.ElementMap</code> or <code
+							>HTMLElementTagNameMap</code>.
+						</li>
+						<li>HTML attributes are typed from <code>DOM.HTML.AttributeMap</code>.</li>
+						<li>HTML properties are typed from <code>DOM.HTML.PropertyMap</code>.</li>
+					</ul>
+				</li>
+				<li>
+					Typed MathML (<code>DOM.MathML</code>)
+					<ul>
+						<li>
+							MathML elements are typed from <code>DOM.MathML.ElementMap</code> or <code
+							>MathMLElementTagNameMap</code>.
+						</li>
+						<li>MathML attributes are typed from <code>DOM.MathML.AttributeMap</code>.</li>
+						<li>MathML properties are typed from <code>DOM.MathML.PropertyMap</code>.</li>
+					</ul>
+				</li>
+				<li>
+					Typed SVG (<code>DOM.SVG</code>)
+					<ul>
+						<li>
+							SVG elements are typed from <code>DOM.SVG.ElementMap</code> or <code
+							>SVGElementTagNameMap</code>.
+						</li>
+						<li>SVG attributes are typed from <code>DOM.SVG.AttributeMap</code>.</li>
+						<li>SVG properties are typed from <code>DOM.SVG.PropertyMap</code>.</li>
+					</ul>
+				</li>
+			</ul>
+
+			<p>
+				Attributes allow unknown names for ecosystem compatibility, while properties use strictly typed for
+				safety.
+			</p>
+
+			<pre><code data-lang="typescript">const badButton = html(
+	"button",
+	attrs({
+		// allowable because it's an attribute
+		wildidea: "yes",
+	}),
+	props({
+		// @ts-expect-error because "yes" is not a boolean
+		disabled: "yes",
+	}),
+	text("Uh, this is a very strange button"),
+)</code></pre>
+
+			<h2>What if I don’t want signals?</h2>
+
+			<p>
+				If you don't want to use signals, import from the <code>pure</code> entrypoint instead. It provides the
+				same DOM primitives without signal handling; <code>group()</code> accepts a static boolean.
+			</p>
+
+			<pre><code data-lang="typescript">Static values use the same @signal-tools/dom entry without creating effects.</code></pre>
+
+			<nav>
+				<ul>
+					<li>
+						<a href="./example">Example</a>
+					</li>
+					<li>
+						<a href="./example/basic-element">Example: Custom Element</a>
+					</li>
+					<li>
+						<a href="./example/button">Example: Custom Button Element</a>
+					</li>
+					<li>
+						<a href="https://github.com/signal-tools/signal-tools">GitHub</a>
+					</li>
+				</ul>
+			</nav>
+		</main>
+	</body>
+</html>

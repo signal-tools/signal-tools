@@ -1,0 +1,54 @@
+{
+	"name": "@signal-tools/workspace",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"packages/*",
+		"examples/*",
+		"tests/dom"
+	],
+	"scripts": {
+		"build": "npm run build --workspace @signal-tools/signal && npm run build --workspace @signal-tools/effect && npm run build --workspace @signal-tools/collections && npm run build --workspace @signal-tools/cssom && npm run build --workspace @signal-tools/dom && npm run build --workspace @signal-tools/dom-demo",
+		"check": "npm run check --workspace @signal-tools/dom && npm run check --workspace @signal-tools/dom-test",
+		"demo": "npm run build --workspace @signal-tools/dom && npm run dev --workspace @signal-tools/dom-demo",
+		"format": "dprint fmt",
+		"format:check": "dprint check",
+		"lint": "biome check",
+		"lint:fix": "biome check --write",
+		"package:check": "npm run package:check:signal && npm run package:check:effect && npm run package:check:collections && npm run package:check:cssom && npm run package:check:dom",
+		"package:check:collections": "npm pack --dry-run --workspace @signal-tools/collections",
+		"package:check:cssom": "npm pack --dry-run --workspace @signal-tools/cssom",
+		"package:check:dom": "npm run lint --workspace @signal-tools/dom",
+		"package:check:effect": "npm pack --dry-run --workspace @signal-tools/effect",
+		"package:check:signal": "npm pack --dry-run --workspace @signal-tools/signal",
+		"test": "npm run test:node && npm run test:browser && npm run test:dom",
+		"test:browser": "vitest run --browser.name=chromium && vitest run --browser.name=firefox && vitest run --browser.name=webkit",
+		"test:dom": "npm test --workspace @signal-tools/dom-test",
+		"test:node": "vitest run --config vitest.node.config.ts",
+		"test:polyfill": "npm run build && npm run test:polyfill:effect && npm run test:polyfill:collections",
+		"test:polyfill:collections": "node scripts/test-collections-consumer.mjs '@signal-tools/signal@npm:signal-polyfill@0.2.2'",
+		"test:polyfill:effect": "node scripts/test-effect-consumer.mjs '@signal-tools/signal@npm:signal-polyfill@0.2.2'"
+	},
+	"packageManager": "npm@12.0.2",
+	"allowScripts": {
+		"dprint": true,
+		"fsevents": true
+	},
+	"devDependencies": {
+		"@arethetypeswrong/cli": "0.18.5",
+		"@biomejs/biome": "2.5.7",
+		"@playwright/test": "1.62.1",
+		"@types/bun": "1.3.14",
+		"@types/node": "26.1.2",
+		"@vitest/browser-playwright": "4.1.10",
+		"@vitest/coverage-istanbul": "4.1.10",
+		"@vitest/ui": "4.1.10",
+		"dprint": "0.55.2",
+		"playwright": "1.62.1",
+		"publint": "0.3.23",
+		"terser": "5.49.2",
+		"typescript": "7.0.2",
+		"vitest": "4.1.10"
+	}
+}
