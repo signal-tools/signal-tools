@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Example - Fundomental</title>
+		<meta charset="utf-8" />
+		<meta name="robots" content="noindex" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="og:title" content="Fundomental" />
+		<meta name="description" content="A library for creating DOM elements with a functional syntax." />
+		<meta property="og:type" content="website" />
+		<link rel="shortcut icon" href="./favicon.ico" />
+		<link rel="stylesheet" href="./example.css" />
+		<script type="importmap">
+		{ "imports": { "@signal-tools/dom": "./dom/index.js", "@signal-tools/effect": "./effect/index.js", "@signal-tools/signal": "./signal.js" } }
+		</script>
+		<script type="module" src="./example.js"></script>
+	</head>
+	<body>
+		<main id="updateMain"></main>
+
+		<select id="updateViewbox">
+			<option>0 0 8 8</option>
+			<option selected>0 0 16 16</option>
+			<option>0 0 24 24</option>
+			<option>0 0 32 32</option>
+			<option>0 0 48 48</option>
+			<option>0 0 64 64</option>
+		</select>
+
+		<input type="checkbox" id="updateShowCheck" checked />
+
+		<input id="updateHeading" value="DOM Concept" />
+	</body>
+</html>

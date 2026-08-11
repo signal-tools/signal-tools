@@ -1,0 +1,16 @@
+{
+	"name": "@signal-tools/dom-test",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"check": "tsc -p tsconfig.json",
+		"pretest": "npm run build --workspace @signal-tools/dom && npm run build --workspace @signal-tools/dom-demo",
+		"test": "npm run test:unit && playwright test",
+		"test:browser": "playwright test",
+		"test:unit": "node --test --experimental-test-coverage --test-coverage-exclude=\"**/*.test.js\" *.test.js"
+	},
+	"dependencies": {
+		"@signal-tools/dom": "0.1.0"
+	}
+}

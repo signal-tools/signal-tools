@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      web_tools_ref:
+        description: web-tools branch, tag, or commit to link
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Use the pinned npm CLI
+        run: npm install --global npm@12.0.2
+      - run: npm ci
+      - name: Link web-tools packages
+        env:
+          WEB_TOOLS_REF: ${{ inputs.web_tools_ref || 'main' }}
+        run: npm run ci:link-web-tools -- "$WEB_TOOLS_REF"
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Build
+        run: npm run build
+      - name: Check types
+        run: npm run check
+      - name: Lint
+        run: npm run lint
+      - name: Check formatting
+        run: npm run format:check
+      - name: Test
+        run: npm test
+      - name: Test alternate Signal implementation
+        run: npm run test:polyfill
+      - name: Check packages
+        run: npm run package:check

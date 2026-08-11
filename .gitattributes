@@ -1,0 +1,14 @@
+# =============================================================================
+# LINGUIST OVERRIDES
+# =============================================================================
+
+# JSON with JavaScript-style code comments
+.vscode/*.json linguist-language=JSON-with-Comments
+tsconfig*.json linguist-language=JSON-with-Comments
+
+# =============================================================================
+# MERGE STRATEGIES
+# =============================================================================
+
+# Lock files (prevent invalid merges)
+package-lock.json merge=binary

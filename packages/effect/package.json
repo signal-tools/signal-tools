@@ -1,0 +1,46 @@
+{
+	"name": "@signal-tools/effect",
+	"version": "0.1.0",
+	"description": "Microtask-batched effects for TC39 Signals",
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/effect#readme",
+	"license": "MIT-0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/signal-effect.d.ts",
+			"default": "./dist/signal-effect.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/effect"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"sideEffects": false,
+	"keywords": [
+		"effect",
+		"reactive",
+		"reactivity",
+		"scheduler",
+		"signal",
+		"tc39",
+		"watcher"
+	],
+	"scripts": {
+		"build": "rm -rf dist && tsc",
+		"prepack": "npm run build"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	},
+	"peerDependencies": {
+		"@signal-tools/signal": "^0.1"
+	}
+}

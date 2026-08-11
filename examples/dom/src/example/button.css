@@ -1,0 +1,14 @@
+@import "../example.css";
+
+button-element {
+	display: inline-block;
+
+	margin: 2rem;
+	padding: 1rem;
+
+	font-size: 200%;
+	font-weight: bolder;
+
+	border-radius: 0.5rem;
+	box-shadow: 0 0 0.5em var(--color-gray-500);
+}

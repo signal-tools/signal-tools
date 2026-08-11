@@ -1,0 +1,50 @@
+{
+	"name": "@signal-tools/storage",
+	"description": "Typed Web Storage change subscriptions and signal-backed watches",
+	"version": "0.1.0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/storage.d.ts",
+			"default": "./dist/storage.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"sideEffects": false,
+	"scripts": {
+		"build": "rm -rf dist && tsc",
+		"prepack": "npm run build"
+	},
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"license": "MIT-0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/storage"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/storage#readme",
+	"keywords": [
+		"localstorage",
+		"reactive",
+		"signal",
+		"sessionstorage",
+		"storage",
+		"subscription",
+		"typed",
+		"watcher"
+	],
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	},
+	"peerDependencies": {
+		"@signal-tools/signal": "^0.1.0"
+	},
+	"dependencies": {
+		"@serve-tools/client-storage": "^0.1"
+	}
+}

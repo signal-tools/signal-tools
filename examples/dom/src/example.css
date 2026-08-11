@@ -1,0 +1,31 @@
+@import "./base.css" layer(base);
+@import "./colors.css" layer(color);
+
+@layer base {
+	* {
+		box-sizing: border-box;
+	}
+
+	html {
+		/* Text */
+		font: 100% / 1.5 system-ui;
+		-webkit-font-smoothing: antialiased;
+		tab-size: 4;
+		text-rendering: optimizeLegibility;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+
+		/* Appearance */
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	h1 {
+		font-size: 200%;
+		font-weight: bolder;
+	}
+}
+
+svg {
+	block-size: 320px;
+	inline-size: 320px;
+}

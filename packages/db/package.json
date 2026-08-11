@@ -1,0 +1,54 @@
+{
+	"name": "@signal-tools/db",
+	"version": "0.1.0",
+	"description": "Typed, promise-based IndexedDB access with signal-backed reactive queries",
+	"author": "Jonathan Neal <jonathantneal@hotmail.com> (https://jonneal.dev)",
+	"homepage": "https://github.com/signal-tools/signal-tools/tree/main/packages/db#readme",
+	"license": "MIT-0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/db.d.ts",
+			"default": "./dist/db.js"
+		},
+		"./shared-worker": {
+			"types": "./dist/shared-worker.d.ts",
+			"default": "./dist/shared-worker.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/signal-tools/signal-tools.git",
+		"directory": "packages/db"
+	},
+	"bugs": "https://github.com/signal-tools/signal-tools/issues",
+	"sideEffects": false,
+	"keywords": [
+		"database",
+		"indexeddb",
+		"reactive",
+		"reactivity",
+		"signal",
+		"storage",
+		"tc39"
+	],
+	"scripts": {
+		"build": "rm -rf dist && tsc",
+		"prepack": "npm run build"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true,
+		"registry": "https://registry.npmjs.org/"
+	},
+	"dependencies": {
+		"@serve-tools/client-shared-db": "^0.1",
+		"@signal-tools/effect": "0.1.0"
+	},
+	"peerDependencies": {
+		"@signal-tools/signal": "^0.1"
+	}
+}
