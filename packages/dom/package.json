@@ -41,7 +41,7 @@
 		"registry": "https://registry.npmjs.org/"
 	},
 	"dependencies": {
-		"@michijs/htmltype": "0.4.12",
+		"@michijs/htmltype": "0.4.16",
 		"@signal-tools/effect": "0.1.0"
 	},
 	"peerDependencies": {
